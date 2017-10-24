@@ -6,8 +6,8 @@
 (defn get-edge [edge]
   (map read-string (str/split edge #" ")))
 
-(defn  add-edge [al, edge]
-  (let [v (get-edge edge) v1 (first v) v2 (second v)]
+(defn  add-edge [al, s]
+  (let [[v1 v2] (get-edge s)]
     (assoc al v1 (set(conj (al v1) v2)))))
 
 (defn bf_shortest_path [v adjlist]
@@ -21,9 +21,13 @@
             depth (inc depth)]
         (recur distances unvisited depth)))))
 
-(with-open [rdr (clojure.java.io/reader "edges")]
-  (->> (line-seq rdr)
-       (reduce add-edge {})
-       (def lol))
-       (prn (keys (sort-by val (zipmap (keys lol) (map #(/ 1 (reduce + (vals (bf_shortest_path % lol)))) (keys lol)))))))
+(defn closeness [v adjlist]
+  (/ 1 (reduce + (vals (bf_shortest_path v adjlist)))))
 
+(with-open [rdr (clojure.java.io/reader "edges")]
+  (as-> (line-seq rdr) input
+        (reduce add-edge {} input)
+        (zipmap (keys input)
+                (map #(closeness % input) (keys input)))
+        (sort-by val input)
+        (prn (keys input))))
