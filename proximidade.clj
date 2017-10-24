@@ -1,4 +1,4 @@
-(ns semantix) 
+(ns proximidade) 
 
 (require '[clojure.string :as str])
 (require '[clojure.set :as set])
